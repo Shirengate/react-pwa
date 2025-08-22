@@ -13,7 +13,7 @@ import InputDesc from "./UI/InputDesc";
 const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
   const [pathComplete, { isLoading }] = useCompleteTaskMutation();
   const [deleteData, { isLoading: deleteLoading }] = useDeleteTaskMutation();
-  const [patchTask] = useChangeTaskDataMutation();
+  const [patchTask, {}] = useChangeTaskDataMutation();
   const [editStatus, setEditStatus] = useState(false);
   const [editedData, setEditedData] = useState({
     title: props.title,
@@ -46,7 +46,7 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
     }
   }
 
-  async function editTask() {
+  async function editTask(): Promise<void> {
     if (props.completed) return;
     setEditStatus(!editStatus);
   }
@@ -62,6 +62,8 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
     }
     try {
       await patchTask(body).unwrap();
+
+      return setEditStatus(false);
     } catch (error) {
       console.log(error);
     }

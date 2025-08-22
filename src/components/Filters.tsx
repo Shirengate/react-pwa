@@ -13,8 +13,8 @@ const Filters: FC<FiltersProps> = ({ loading, all, completed }) => {
         <h2 className="text-xl font-semibold text-gray-800">Tasks</h2>
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>{all} tasks remaining</span>
-          <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
-          <span>{completed} completed</span>
+          <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+          <span className="text-green-400">{completed} completed</span>
         </div>
       </div>
 

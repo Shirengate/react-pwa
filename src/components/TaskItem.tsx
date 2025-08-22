@@ -1,12 +1,39 @@
 import type { Task } from "@/types/types";
 import { memo, useMemo, type FC } from "react";
 import dayjs from "dayjs";
-import { useCompleteTaskMutation } from "@/store/api/tasks";
+import {
+  useCompleteTaskMutation,
+  useDeleteTaskMutation,
+} from "@/store/api/tasks";
+import Spiner from "./Spiner";
 
 const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
-  const [patchData] = useCompleteTaskMutation();
-
+  const [patchData, { isLoading }] = useCompleteTaskMutation();
+  const [deleteData, { isLoading: deleteLoading }] = useDeleteTaskMutation();
   const date = dayjs(props.date).format("MMMM D, YYYY");
+  async function completeTask() {
+    const data = {
+      date,
+      id: props.id,
+      completed: !props.completed,
+    };
+    try {
+      await patchData(data).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function deleteTask() {
+    const ok = confirm("are you sure want delete this data?");
+    if (!ok) {
+      return;
+    }
+    try {
+      await deleteData(props.id).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const levelStyles = useMemo(() => {
     switch (props.level) {
       case "high":
@@ -55,14 +82,22 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
           <button className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
             ✏️
           </button>
-          <button className="p-2 text-gray-400 hover:text-red-600 transition-colors">
-            🗑️
+          <button
+            onClick={deleteTask}
+            className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+          >
+            {!deleteLoading ? <span> 🗑️</span> : <Spiner proportions={20} />}
           </button>
-          <input
-            type="checkbox"
-            checked={props.completed}
-            className="mt-1 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
+          {!isLoading ? (
+            <input
+              type="checkbox"
+              checked={props.completed}
+              onChange={completeTask}
+              className="mt-1 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+          ) : (
+            <Spiner proportions={25} />
+          )}
         </div>
       </div>
     </div>

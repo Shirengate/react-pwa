@@ -23,15 +23,24 @@ export const taskApi = createApi({
     }),
     completeTask: build.mutation<
       Task,
-      { complete: boolean; id: number; date: string }
+      { completed: boolean; id: number; date: string }
     >({
-      query: ({ id, complete, date }) => ({
+      query: ({ id, completed, date }) => ({
         url: `/tasks/${id}`,
         body: {
-          complete,
+          completed,
           date,
         },
+        method: "PATCH",
       }),
+      invalidatesTags: ["tasks"],
+    }),
+    deleteTask: build.mutation<Task, number>({
+      query: (id) => ({
+        url: `/tasks/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["tasks"],
     }),
   }),
 });
@@ -40,4 +49,5 @@ export const {
   useGetAllTaksQuery,
   usePostTaskMutation,
   useCompleteTaskMutation,
+  useDeleteTaskMutation,
 } = taskApi;

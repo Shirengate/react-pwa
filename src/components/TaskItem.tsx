@@ -1,19 +1,26 @@
-import type { Task } from "@/types/types";
+import type { ChangedTask, Task } from "@/types/types";
 import { memo, useMemo, useState, type FC } from "react";
 import dayjs from "dayjs";
 import {
+  useChangeTaskDataMutation,
   useCompleteTaskMutation,
   useDeleteTaskMutation,
 } from "@/store/api/tasks";
 import Spiner from "./Spiner";
+import Descrtiption from "./UI/Descrtiption";
+import InputDesc from "./UI/InputDesc";
 
 const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
   const [pathComplete, { isLoading }] = useCompleteTaskMutation();
   const [deleteData, { isLoading: deleteLoading }] = useDeleteTaskMutation();
+  const [patchTask] = useChangeTaskDataMutation();
   const [editStatus, setEditStatus] = useState(false);
   const [editedData, setEditedData] = useState({
     title: props.title,
+    description: props.description || "",
+    level: props.level,
   });
+
   const date = dayjs(props.date).format("MMMM D, YYYY");
   async function completeTask() {
     const data = {
@@ -43,6 +50,22 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
     if (props.completed) return;
     setEditStatus(!editStatus);
   }
+  async function changeTask() {
+    const body: ChangedTask = { ...editedData, id: props.id };
+    const keys = Object.keys(body) as Array<keyof typeof body>;
+    if (
+      keys.every((key) => {
+        return body[key] === props[key];
+      })
+    ) {
+      return setEditStatus(false);
+    }
+    try {
+      await patchTask(body).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const levelStyles = useMemo(() => {
     switch (props.level) {
       case "high":
@@ -53,18 +76,53 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
         return "bg-blue-100 text-blue-700";
     }
   }, [props.level]);
+  const selectLevelStyles = useMemo(() => {
+    switch (editedData.level) {
+      case "high":
+        return "bg-red-100 text-red-700";
+      case "low":
+        return "bg-green-100 text-green-700";
+      case "medium":
+        return "bg-blue-100 text-blue-700";
+    }
+  }, [editedData.level]);
   return (
     <div
       onDoubleClick={editTask}
       className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-200"
     >
       <div className="flex flex-col items-start gap-4">
-        <span
-          className={`px-3 py-1 ${levelStyles} font-medium rounded-full self-end text-sm`}
-        >
-          {props.level}
-        </span>
-        <div className="flex-1">
+        {!editStatus ? (
+          <span
+            className={`px-3 py-1 ${levelStyles} font-medium rounded-full self-end text-sm`}
+          >
+            {props.level}
+          </span>
+        ) : (
+          <select
+            className={`px-3  py-1 text-center font-medium rounded-full ${selectLevelStyles} text-sm self-end`}
+            name="status"
+            value={editedData.level}
+            onChange={(e) => {
+              const value = e.target.value as "low" | "medium" | "high";
+              setEditedData({ ...editedData, level: value });
+            }}
+          >
+            <option
+              className="bg-green-100  text-center text-green-700"
+              value="low"
+            >
+              low
+            </option>
+            <option className="bg-blue-100 text-blue-700" value="medium">
+              medium
+            </option>
+            <option className="bg-red-100 text-red-700" value="high">
+              high
+            </option>
+          </select>
+        )}
+        <div className="flex-1 w-full">
           <div className="flex items-center w-full gap-3 mb-2">
             {!editStatus ? (
               <h3
@@ -76,7 +134,7 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
               </h3>
             ) : (
               <input
-                className="w-full border"
+                className="w-full p-2 border-2 text-lg  font-medium  text-gray-800"
                 value={editedData.title}
                 onChange={(e) =>
                   setEditedData({ ...editedData, title: e.target.value })
@@ -84,16 +142,19 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
               />
             )}
           </div>
-          {props.description ? (
-            <p
-              className={`text-gray-600 text-justify w-full mb-3 ${
-                props.completed ? "line-through" : ""
-              }`}
-            >
-              {props.description}
-            </p>
-          ) : (
-            ""
+          {props.description && !editStatus && (
+            <Descrtiption
+              description={props.description}
+              completed={props.completed}
+            />
+          )}
+          {props.description && editStatus && (
+            <InputDesc
+              value={editedData.description}
+              onChange={(e): void =>
+                setEditedData({ ...editedData, description: e.target.value })
+              }
+            />
           )}
           <div className="flex items-center gap-4 text-sm text-gray-500">
             {!props.completed ? <span>📅 {date}</span> : <span>✅ {date}</span>}
@@ -133,7 +194,12 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
               )}
             </>
           ) : (
-            <span className="text-[40px] text-center w-[65px] ">✅</span>
+            <span
+              onClick={changeTask}
+              className="text-[40px] text-center w-[65px] "
+            >
+              ✅
+            </span>
           )}
         </div>
       </div>

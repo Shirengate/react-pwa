@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { type Task, type TaskBody, type Tasks } from "@/types/types";
+import {
+  type ChangedTask,
+  type Task,
+  type TaskBody,
+  type Tasks,
+} from "@/types/types";
 export const taskApi = createApi({
   reducerPath: "taskApi",
   baseQuery: fetchBaseQuery({
@@ -42,6 +47,18 @@ export const taskApi = createApi({
       }),
       invalidatesTags: ["tasks"],
     }),
+    changeTaskData: build.mutation<Task, ChangedTask>({
+      query: ({ id, title, description, level }) => ({
+        url: `/tasks/${id}`,
+        body: {
+          title,
+          description,
+          level,
+        },
+        method: "PATCH",
+      }),
+      invalidatesTags: ["tasks"],
+    }),
   }),
 });
 
@@ -50,4 +67,5 @@ export const {
   usePostTaskMutation,
   useCompleteTaskMutation,
   useDeleteTaskMutation,
+  useChangeTaskDataMutation,
 } = taskApi;

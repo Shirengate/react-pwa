@@ -7,6 +7,7 @@ export interface Task {
   date: string; // можно использовать template literal type для формата даты
   level: Level; // конкретные значения
   completed: boolean;
+  img?: string | URL;
 }
 
 export type Tasks = Task[];

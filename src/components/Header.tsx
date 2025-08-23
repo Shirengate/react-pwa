@@ -10,6 +10,10 @@ export const Header = memo(() => {
         <p className="text-gray-600 text-center mt-2">
           Stay organized and boost your productivity
         </p>
+        <img
+          src="https://png.pngtree.com/thumb_back/fh260/background/20230612/pngtree-free-desktop-wallpaper-beautiful-green-fields-image_2950823.jpg"
+          alt=""
+        />
       </div>
     </header>
   );

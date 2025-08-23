@@ -1,11 +1,11 @@
 import { usePostTaskMutation } from "@/store/api/tasks";
 import type { TaskBody } from "@/types/types";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 
 type TaskLevel = "low" | "medium" | "high";
 
-const Form = () => {
+const Form = memo(() => {
   const [taskData, setTaskData] = useState<TaskBody>({
     title: "",
     description: "",
@@ -83,6 +83,6 @@ const Form = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Form;

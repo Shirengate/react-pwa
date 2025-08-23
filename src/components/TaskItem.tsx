@@ -13,7 +13,7 @@ import InputDesc from "./UI/InputDesc";
 const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
   const [pathComplete, { isLoading }] = useCompleteTaskMutation();
   const [deleteData, { isLoading: deleteLoading }] = useDeleteTaskMutation();
-  const [patchTask, {}] = useChangeTaskDataMutation();
+  const [patchTask, { isLoading: loading }] = useChangeTaskDataMutation();
   const [editStatus, setEditStatus] = useState(false);
   const [editedData, setEditedData] = useState({
     title: props.title,

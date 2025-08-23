@@ -3,10 +3,24 @@ import Form from "@/components/Form";
 import Filters from "@/components/Filters";
 import TaskList from "@/components/TaskList";
 import { useGetAllTaksQuery } from "./store/api/tasks";
+import { useMemo, useState } from "react";
+import type { FilterStatus } from "./types/types";
 
 const App = () => {
-  const { data, isLoading, isError, refetch } = useGetAllTaksQuery("");
+  const { data, isLoading, isFetching, isError, refetch } =
+    useGetAllTaksQuery("");
 
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+  const currentTasks = useMemo(() => {
+    switch (filterStatus) {
+      case "active":
+        return data?.filter((item) => !item.completed);
+      case "completed":
+        return data?.filter((item) => item.completed);
+      default:
+        return null;
+    }
+  }, [filterStatus, data]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Header />
@@ -18,8 +32,13 @@ const App = () => {
               completed={data?.filter((item) => item.completed).length || 0}
               all={data?.length || 0}
               loading={isLoading}
+              filter={filterStatus}
+              changeFilter={setFilterStatus}
             />
-            <TaskList data={data} loading={isLoading} />
+            <TaskList
+              data={currentTasks ? currentTasks : data}
+              loading={isLoading}
+            />
           </>
         ) : (
           <div className="max-w-3xl mx-auto">

@@ -19,3 +19,5 @@ export interface ChangedTask {
   description: string;
   level: Level;
 }
+
+export type FilterStatus = "all" | "active" | "completed";

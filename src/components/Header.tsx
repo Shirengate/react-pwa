@@ -1,4 +1,6 @@
-export const Header = () => {
+import { memo } from "react";
+
+export const Header = memo(() => {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="mx-auto px-4 py-6">
@@ -11,4 +13,4 @@ export const Header = () => {
       </div>
     </header>
   );
-};
+});

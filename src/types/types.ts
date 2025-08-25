@@ -21,3 +21,11 @@ export interface ChangedTask {
 }
 
 export type FilterStatus = "all" | "active" | "completed";
+
+export interface Post {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+}
+export type Posts = Post[];

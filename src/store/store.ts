@@ -1,12 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import { taskApi } from "./api/tasks";
+import { postApi } from "./api/posts";
+import { favoritePosts } from "./reducer/favorite";
+
 export const store = configureStore({
   reducer: {
     [taskApi.reducerPath]: taskApi.reducer,
+    [postApi.reducerPath]: postApi.reducer,
+    favoritePosts: favoritePosts.reducer,
   },
   middleware: (fn) => {
-    return fn().concat(taskApi.middleware);
+    return fn().concat(taskApi.middleware).concat(postApi.middleware);
   },
 });
 

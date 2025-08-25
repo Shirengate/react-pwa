@@ -124,9 +124,7 @@ const TaskItem: FC<{ props: Task }> = memo(({ props }) => {
             </option>
           </select>
         )}
-        <div>
-          <img src={props.img} alt="" />
-        </div>
+        <div></div>
         <div className="flex-1 w-full">
           <div className="flex items-center w-full gap-3 mb-2">
             {!editStatus ? (

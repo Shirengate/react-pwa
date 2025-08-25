@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { Link } from "react-router";
 
 export const Header = memo(() => {
   return (
@@ -10,10 +11,21 @@ export const Header = memo(() => {
         <p className="text-gray-600 text-center mt-2">
           Stay organized and boost your productivity
         </p>
-        <img
-          src="https://png.pngtree.com/thumb_back/fh260/background/20230612/pngtree-free-desktop-wallpaper-beautiful-green-fields-image_2950823.jpg"
-          alt=""
-        />
+
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Link
+            to="/"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200"
+          >
+            Tasks
+          </Link>
+          <Link
+            to="/blog"
+            className="bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200"
+          >
+            Blog
+          </Link>
+        </div>
       </div>
     </header>
   );

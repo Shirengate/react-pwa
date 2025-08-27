@@ -78,6 +78,10 @@ const postSlice = createSlice({
     resetMoreError(state) {
       state.moreError = false;
     },
+    setOfflineData(state, action) {
+      state.data = action.payload;
+      state.hasMore = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -147,5 +151,6 @@ const postSlice = createSlice({
   },
 });
 
-export const { updatePage, cancelPage, resetMoreError } = postSlice.actions;
+export const { updatePage, cancelPage, resetMoreError, setOfflineData } =
+  postSlice.actions;
 export default postSlice.reducer;

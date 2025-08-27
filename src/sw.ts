@@ -1,25 +1,11 @@
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { CacheFirst, NetworkFirst } from "workbox-strategies";
+import { NetworkFirst } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
 declare const self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
-
-registerRoute(
-  ({ request }) => {
-    return (
-      request.destination === "document" ||
-      request.destination === "style" ||
-      request.destination === "script"
-    );
-  },
-  new CacheFirst({
-    cacheName: "documentData",
-    plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
-  })
-);
 
 registerRoute(
   ({ url, request }) => {
@@ -37,16 +23,42 @@ registerRoute(
   })
 );
 
+const POST_CACHE = "post-cache";
+
 registerRoute(
-  ({ url, request }) => {
-    return request.method == "GET" && url.pathname.includes("posts");
-  },
-  new NetworkFirst({
-    cacheName: "paginated-posts",
-    networkTimeoutSeconds: 5,
-    plugins: [
-      new CacheableResponsePlugin({ statuses: [0, 200] }),
-      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 300 }),
-    ],
-  })
+  ({ url, request }) =>
+    request.method == "GET" && url.pathname.includes("posts"),
+  async ({ _, request }) => {
+    try {
+      const response = await fetch(request);
+      const cache = await caches.open(POST_CACHE);
+      cache.put(request, response.clone());
+      return response;
+    } catch (err) {
+      const cache = await caches.open(POST_CACHE);
+      const keys = await cache.keys();
+
+      const allItems = [];
+
+      for (const key of keys) {
+        const cachedResponse = await cache.match(key);
+        if (cachedResponse) {
+          const data = await cachedResponse.json();
+          allItems.push(...data);
+        }
+      }
+
+      const clientsList = await self.clients.matchAll({ type: "window" });
+      for (const client of clientsList) {
+        client.postMessage({
+          type: "OFFLINE_DATA",
+          payload: allItems,
+        });
+      }
+
+      return new Response(JSON.stringify({ data: [], offline: true }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }
 );

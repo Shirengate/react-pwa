@@ -36,3 +36,17 @@ registerRoute(
     ],
   })
 );
+
+registerRoute(
+  ({ url, request }) => {
+    return request.method == "GET" && url.pathname.includes("posts");
+  },
+  new NetworkFirst({
+    cacheName: "paginated-posts",
+    networkTimeoutSeconds: 5,
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [0, 200] }),
+      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 300 }),
+    ],
+  })
+);

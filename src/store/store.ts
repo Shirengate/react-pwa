@@ -1,7 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, createAsyncThunk } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import { taskApi } from "./api/tasks";
-import { postApi } from "./api/posts";
+import postSlice from "./reducer/posts";
 import { favoritePosts } from "./reducer/favorite";
 import {
   persistStore,
@@ -27,7 +27,7 @@ const persistedFavoriteReducer = persistReducer(
 export const store = configureStore({
   reducer: {
     [taskApi.reducerPath]: taskApi.reducer,
-    [postApi.reducerPath]: postApi.reducer,
+    posts: postSlice,
     favoritePosts: persistedFavoriteReducer,
   },
   middleware: (fn) => {
@@ -35,9 +35,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    })
-      .concat(taskApi.middleware)
-      .concat(postApi.middleware);
+    }).concat(taskApi.middleware);
   },
 });
 
@@ -48,4 +46,8 @@ export const useAppSelector = useSelector.withTypes<RootState>();
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 
+export const createAppAsyncThunk = createAsyncThunk.withTypes<{
+  state: RootState;
+  dispatch: AppDispatch;
+}>();
 export const persister = persistStore(store);

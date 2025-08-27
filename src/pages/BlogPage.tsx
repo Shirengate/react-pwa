@@ -1,11 +1,24 @@
 import ErrorList from "@/components/Posts/components/ErrorList";
 import PostsList from "@/components/Posts/components/PostsList";
 import PostsSkeleton from "@/components/Posts/UI/PostsSkeleton";
-import { useGetAllPostsQuery } from "@/store/api/posts";
+import Spiner from "@/components/Spiner";
+import { useObserver } from "@/hooks/useObserver";
+import { addPosts, getPosts } from "@/store/reducer/posts";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { useEffect, useRef } from "react";
 
 const BlogPage = () => {
-  const { data, isLoading, isFetching, isError } = useGetAllPostsQuery("");
+  const dispatch = useAppDispatch();
+  const { data, fetchLoading, fetchError, hasMore } = useAppSelector(
+    (state) => state.posts
+  );
+  useEffect(() => {
+    dispatch(getPosts());
+  }, [dispatch]);
 
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  useObserver(loaderRef);
   return (
     <>
       <div className="mb-8">
@@ -16,8 +29,13 @@ const BlogPage = () => {
           Explore our latest articles and insights
         </p>
       </div>
-      {(isLoading || isFetching) && <PostsSkeleton />}
-      {data && !isError ? <PostsList posts={data} /> : <ErrorList />}
+      {fetchLoading && <PostsSkeleton />}
+      {data && !fetchError ? <PostsList posts={data} /> : <ErrorList />}
+      {hasMore && (
+        <div ref={loaderRef} className="flex justify-center items-center mt-10">
+          <Spiner proportions={30} />
+        </div>
+      )}
     </>
   );
 };

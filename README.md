@@ -1,69 +1,42 @@
-# React + TypeScript + Vite
+# 📝 TODO List + Posts App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Учебный проект, объединяющий функциональность TODO списка и системы постов. Создан для изучения современного стека React-разработки с TypeScript и Redux ecosystem.
 
-Currently, two official plugins are available:
+## 🚀 Технологии
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React** - библиотека для создания пользовательских интерфейсов
+- **TypeScript** - типизированная версия JavaScript
+- **Redux Toolkit** - современный способ работы с Redux
+- **RTK Query** - мощный инструмент для работы с API и кэшированием данных
+- **Redux Async Thunk** - middleware для асинхронных операций
+- **Tailwind CSS** - utility-first CSS фреймворк
+- **Workbox** - библиотека для создания Service Workers
+- **Infinity Scroll** - бесконечная прокрутка для постов
 
-## Expanding the ESLint configuration
+## 📋 Функциональность
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### TODO List
+- ✅ Создание новых задач
+- ✏️ Редактирование существующих задач
+- ❌ Удаление задач
+- ☑️ Отметка задач как выполненных
+- 🔍 Фильтрация по статусу (все/активные/завершённые)
+- 💾 Сохранение состояния
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Posts System
+- 📝 Просмотр списка постов с бесконечной прокруткой
+- 👀 Детальный просмотр поста
+- 💬 Комментарии к постам
+- 👤 Информация об авторах
+- 🔄 Автоматическое кэширование данных
+- 📱 Оффлайн режим с Service Worker
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### PWA Features
+- 📲 Service Worker для кэширования ресурсов
+- 🔌 Работа в оффлайн режиме
+- ⚡ Быстрая загрузка благодаря кэшированию
+- 🔄 Автоматическое обновление кэша
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🛠️ Установка и запуск
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+```bash

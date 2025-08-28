@@ -81,6 +81,8 @@ const postSlice = createSlice({
     setOfflineData(state, action) {
       state.data = action.payload;
       state.hasMore = false;
+      state.loading = false;
+      state.fetchLoading = false;
     },
   },
   extraReducers: (builder) => {
@@ -118,27 +120,22 @@ const postSlice = createSlice({
       state.data.push(...action.payload);
       state.currentPage += 1;
       if (action.payload.length < 10) {
-        state.hasMore = false; // Исправлено: должно быть false, если данных меньше лимита
+        state.hasMore = false;
       }
     });
     builder.addCase(addPosts.rejected, (state, action) => {
       state.loading = false;
 
-      // Обрабатываем ошибку limit
       if (action.payload === "limit") {
         state.moreError = "limit";
-        state.hasMore = false; // Больше нет данных для загрузки
-      }
-      // Обрабатываем Axios ошибки
-      else if (action.payload instanceof AxiosError) {
+        state.hasMore = false;
+      } else if (action.payload instanceof AxiosError) {
         if (action.payload.code) {
           state.moreError = action.payload.code;
         } else {
           state.moreError = true;
         }
-      }
-      // Обрабатываем другие ошибки
-      else if (action.payload instanceof Error) {
+      } else if (action.payload instanceof Error) {
         state.moreError = action.payload.message;
       } else {
         state.moreError = true;

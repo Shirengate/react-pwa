@@ -1,11 +1,19 @@
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { NetworkFirst } from "workbox-strategies";
+import { CacheOnly, NetworkFirst } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
 declare const self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
+
+registerRoute(
+  ({ request }) => request.destination === "document",
+  new NetworkFirst({
+    cacheName: "html-documents",
+    plugins: [],
+  })
+);
 
 registerRoute(
   ({ url, request }) => {

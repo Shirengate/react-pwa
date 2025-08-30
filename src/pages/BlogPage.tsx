@@ -3,7 +3,7 @@ import PostsList from "@/components/Posts/components/PostsList";
 import PostsSkeleton from "@/components/Posts/UI/PostsSkeleton";
 import Spiner from "@/components/Spiner";
 import { useObserver } from "@/hooks/useObserver";
-import { addPosts, getPosts } from "@/store/reducer/posts";
+import { getPosts } from "@/store/reducer/posts";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { useEffect, useRef } from "react";
 

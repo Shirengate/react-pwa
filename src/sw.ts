@@ -40,7 +40,7 @@ registerRoute(
     try {
       const response = await fetch(request);
       const cache = await caches.open(POST_CACHE);
-      cache.put(request, response.clone());
+      await cache.put(request, response.clone());
       return response;
     } catch (err) {
       const cache = await caches.open(POST_CACHE);

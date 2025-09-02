@@ -1,6 +1,6 @@
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { CacheOnly, NetworkFirst } from "workbox-strategies";
+import { NetworkFirst } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
@@ -19,7 +19,7 @@ registerRoute(
   ({ url, request }) => {
     console.log(url);
 
-    return request.method === "GET" && url.pathname.includes("tasks");
+    return request.method === "GET" && url.pathname !== "/posts";
   },
   new NetworkFirst({
     cacheName: "api-dynamic",
@@ -34,8 +34,7 @@ registerRoute(
 const POST_CACHE = "post-cache";
 
 registerRoute(
-  ({ url, request }) =>
-    request.method == "GET" && url.pathname.includes("posts"),
+  ({ url, request }) => request.method == "GET" && url.pathname === "/posts",
   async ({ _, request }) => {
     try {
       const response = await fetch(request);
@@ -56,11 +55,29 @@ registerRoute(
         }
       }
 
+      const allDocuments = [];
+
+      const postsCache = await caches.open("api-dynamic");
+      const postsKeys = await postsCache.keys();
+
+      for (const request of postsKeys) {
+        const response = await postsCache.match(request);
+        if (response) {
+          const url = new URL(response.url);
+
+          if (url.pathname.includes("/posts/")) {
+            const pathParts = url.pathname.split("/");
+            const id = pathParts[pathParts.length - 1];
+            allDocuments.push(id);
+          }
+        }
+      }
       const clientsList = await self.clients.matchAll({ type: "window" });
       for (const client of clientsList) {
         client.postMessage({
           type: "OFFLINE_DATA",
           payload: allItems,
+          availableUrls: allDocuments,
         });
       }
 

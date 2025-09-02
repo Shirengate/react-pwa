@@ -1,4 +1,4 @@
-import type { Posts } from "@/types/types";
+import type { Post, Posts } from "@/types/types";
 import {
   createAsyncThunk,
   createSlice,
@@ -84,6 +84,9 @@ const postSlice = createSlice({
       state.loading = false;
       state.fetchLoading = false;
     },
+    clearData(state) {
+      state.data = [];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -148,6 +151,11 @@ const postSlice = createSlice({
   },
 });
 
-export const { updatePage, cancelPage, resetMoreError, setOfflineData } =
-  postSlice.actions;
+export const {
+  updatePage,
+  cancelPage,
+  resetMoreError,
+  setOfflineData,
+  clearData,
+} = postSlice.actions;
 export default postSlice.reducer;

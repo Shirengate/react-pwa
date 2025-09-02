@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import "./assets/index.css";
 import { Provider } from "react-redux";
-import { persister, store, useAppDispatch } from "./store/store";
+import { persister, store } from "./store/store";
 
 import routes from "./router/router";
 import { RouterProvider } from "react-router";
@@ -11,8 +11,6 @@ import { setOfflineData } from "./store/reducer/posts";
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.addEventListener("message", (event) => {
     if (event.data?.type === "OFFLINE_DATA") {
-      console.log("no data");
-
       store.dispatch(setOfflineData(event.data.payload));
     }
   });

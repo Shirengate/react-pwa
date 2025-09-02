@@ -1,5 +1,6 @@
 import MainLayout from "@/layout/MainLayout";
 import BlogPage from "@/pages/BlogPage";
+import CurrentBlog from "@/pages/CurrentBlog";
 import MainPage from "@/pages/MainPage";
 import { createBrowserRouter } from "react-router";
 const routes = createBrowserRouter([
@@ -13,6 +14,10 @@ const routes = createBrowserRouter([
       {
         path: "/blog",
         Component: BlogPage,
+      },
+      {
+        path: "/blog/:id",
+        Component: CurrentBlog,
       },
     ],
   },

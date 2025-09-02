@@ -11,6 +11,7 @@ interface PostProps {
 const PostItem: FC<PostProps> = memo(({ post, isFavorite }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   return (
     <article className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-center gap-2 mb-3">
@@ -19,10 +20,7 @@ const PostItem: FC<PostProps> = memo(({ post, isFavorite }) => {
         <span className="text-sm text-gray-500">User {post.userId}</span>
       </div>
 
-      <h2
-        onClick={() => navigate(`/blog/${post.id}`)}
-        className="text-2xl font-semibold text-gray-800 mb-3 hover:text-blue-600 cursor-pointer transition-colors duration-200"
-      >
+      <h2 className="text-2xl font-semibold text-gray-800 mb-3 hover:text-blue-600 cursor-pointer transition-colors duration-200">
         {post.title}
       </h2>
 
@@ -30,8 +28,9 @@ const PostItem: FC<PostProps> = memo(({ post, isFavorite }) => {
 
       <div className="flex items-center justify-between">
         <button
+          disabled={post.offline === false}
           onClick={() => navigate(`/blog/${post.id}`)}
-          className="text-blue-600 cursor-pointer hover:text-blue-700 font-medium text-sm transition-colors duration-200"
+          className="text-blue-600 cursor-pointer disabled:text-red-500 disabled:cursor-none hover:text-blue-700 font-medium text-sm transition-colors duration-200"
         >
           Read More →
         </button>

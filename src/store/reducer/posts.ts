@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { type RootState } from "../store";
-
+import type { OfflineData } from "@/types/types";
 export const getPosts = createAsyncThunk<Posts, void, { state: RootState }>(
   "post/getPosts",
   async (_, { rejectWithValue }) => {
@@ -29,7 +29,6 @@ export const addPosts = createAsyncThunk<Posts, void, { state: RootState }>(
   async (_, { getState, rejectWithValue }) => {
     const state = getState().posts;
     if (state.data.length >= 100) {
-      // Используем rejectWithValue для передачи конкретной ошибки
       return rejectWithValue("limit");
     }
     const page = state.currentPage + 1;
@@ -74,12 +73,24 @@ const postSlice = createSlice({
     cancelPage(state) {
       state.currentPage -= 1;
     },
-    // Добавляем редюсер для сброса ошибки limit
+
     resetMoreError(state) {
       state.moreError = false;
     },
-    setOfflineData(state, action) {
-      state.data = action.payload;
+    setOfflineData(state, action: PayloadAction<OfflineData>) {
+      state.data = action.payload.payload.map((item) => {
+        if (action.payload.availableUrls.includes(String(item.id))) {
+          return {
+            ...item,
+            offline: true,
+          };
+        } else {
+          return {
+            ...item,
+            offline: false,
+          };
+        }
+      });
       state.hasMore = false;
       state.loading = false;
       state.fetchLoading = false;

@@ -27,5 +27,12 @@ export interface Post {
   id: number;
   title: string;
   body: string;
+  offline?: boolean;
 }
 export type Posts = Post[];
+
+export interface OfflineData {
+  type: string;
+  payload: Posts;
+  availableUrls: string[];
+}

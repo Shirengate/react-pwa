@@ -11,7 +11,13 @@ import { setOfflineData } from "./store/reducer/posts";
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.addEventListener("message", (event) => {
     if (event.data?.type === "OFFLINE_DATA") {
-      store.dispatch(setOfflineData(event.data.payload));
+      store.dispatch(
+        setOfflineData({
+          type: "OFFLINE_DATA",
+          payload: event.data.payload,
+          availableUrls: event.data.availableUrls,
+        })
+      );
     }
   });
 }
